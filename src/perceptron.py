@@ -17,8 +17,8 @@ class Perceptron():
         self.theta = -1.0  # w0
         self.h0 = -1.0 #h0
         self.data = self.insertBias()  # insere valor do x0 na base de dados
-        self.wi = self.initW()  # incializa w da camada oculta (aleatório com theta w0)
-        self.wj = self.initW()  # incializa w da camada de saida (aleatório com theta w0)
+        self.wi = self.initW(0)  # incializa w da camada oculta (aleatório com theta w0)
+        self.wj = self.initW(1)  # incializa w da camada de saida (aleatório com theta w0)
 
     # Retorna a ultima coluna de certo x com o valor de classe desejado
     # Filtra a classe pelo index do neuronio
@@ -48,33 +48,40 @@ class Perceptron():
         return d
 
     # Inicializa a matrix w com mesmo numero de colunas da base e com c linhas(número de neuronios)
-    def initW(self):
-        matrix = np.random.rand(self.neurons, (self.data.shape[1] - 1))
-        matrix[:, 0] = self.theta
+    def initW(self,layer_index):
+        if layer_index == 0:
+            matrix = np.random.rand(self.hidden_neurons, (self.data.shape[1] - 1))
+            matrix[:, 0] = self.theta
+        else:
+            matrix = np.random.rand(self.neurons, (self.data.shape[1] - 1))
+            matrix[:, 0] = self.theta
         return matrix
 
     # Imprime informações gerais sobre o modelo da rede
     def printInfo(self):
         print("Informações: \n")
         print("Dados:", self.data)
-        print("Proporção de treinamento/testes:", self.proportion)
-        print("Taxa de aprendizagem:", self.eta)
-        print("Número de épocas: ", self.epochs)
-        print("Vetor w inicial: \n", self.wj)
-        print("Função de ativação:", self.functionName)
+        # print("Proporção de treinamento/testes:", self.proportion)
+        # print("Taxa de aprendizagem:", self.eta)
+        # print("Número de épocas: ", self.epochs)
+        print("Vetor wi inicial: \n", self.wi)
+        print("Vetor wj inicial: \n", self.wj)
+        # print("Função de ativação:", self.functionName)
 
     # Calcula o produto interno w[i]T.x
     # Onde, i é o index do neurônio
     def dotProduct(self, pattern, weights):
         x = pattern[0:-1]
-        w = weights
         u = []
-        for index in range(self.neurons):
-            u.append(np.dot(w[index], x))
+        for index in range(len(weights)):
+            u.append(np.dot(weights[index], x))
         return u
-
+    
+    # TODO ajustar calculo do y
     # Retorna uma lista com as saidas dos neuronios
     def y(self, hidden_output):
+        print('h: ', hidden_output)
+        print('wj: ', self.wj)
         u = self.dotProduct(hidden_output, self.wj)
         y = []
         for index in range(self.neurons):
@@ -115,6 +122,7 @@ class Perceptron():
     # Saída da camada oculta
     def h(self, x):
         u = self.dotProduct(x,self.wi)
+        print('ui ', u)
         h = [self.h0]
         for index in range(self.hidden_neurons):
             h.append(self.function(u[index]))
