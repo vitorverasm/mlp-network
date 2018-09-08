@@ -53,7 +53,7 @@ class Perceptron():
             matrix = np.random.rand(self.hidden_neurons, (self.data.shape[1] - 1))
             matrix[:, 0] = self.theta
         else:
-            matrix = np.random.rand(self.neurons, (self.data.shape[1] - 1))
+            matrix = np.random.rand(self.neurons, (self.hidden_neurons))
             matrix[:, 0] = self.theta
         return matrix
 
@@ -81,7 +81,7 @@ class Perceptron():
     # Retorna uma lista com as saidas dos neuronios
     def y(self, hidden_output):
         print('h: ', hidden_output)
-        print('wj: ', self.wj)
+        print('wj: \n', self.wj)
         u = self.dotProduct(hidden_output, self.wj)
         y = []
         for index in range(self.neurons):
